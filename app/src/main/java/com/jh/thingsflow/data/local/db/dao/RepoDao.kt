@@ -13,5 +13,8 @@ interface RepoDao {
     fun insert(repoEntity: RepoEntity)
 
     @Query("SELECT * FROM Repo WHERE org = :org AND repo = :repo")
-    fun getRepo(org: String, repo: String): Flow<RepoEntity>
+    fun getRepoAsFlow(org: String, repo: String): Flow<RepoEntity?>
+
+    @Query("SELECT * FROM Repo WHERE org = :org AND repo = :repo")
+    fun getRepo(org: String, repo: String): RepoEntity?
 }

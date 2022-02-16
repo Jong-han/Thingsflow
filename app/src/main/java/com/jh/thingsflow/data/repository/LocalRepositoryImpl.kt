@@ -14,7 +14,11 @@ class LocalRepositoryImpl @Inject constructor(private val repoDao: RepoDao, priv
         repoDao.insert(repoEntity)
     }
 
-    override suspend fun getRepo(org: String, repo: String): Flow<RepoEntity> {
-        return repoDao.getRepo(org, repo)
+    override suspend fun getRepoAsFlow(org: String, repo: String): Flow<RepoEntity?> {
+        return repoDao.getRepoAsFlow(org, repo)
+    }
+
+    override suspend fun isExist(org: String, repo: String): Boolean {
+        return repoDao.getRepo(org, repo) != null
     }
 }

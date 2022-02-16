@@ -9,4 +9,5 @@ interface IssueUseCase {
     fun getIssueListFromRemote(org: String, repo: String): Flow<Resource<ResultIssue>>
     suspend fun insertRepo(org: String, repo: String, resultIssue: ResultIssue)
     suspend fun getRepo(org: String, repo: String): Flow<List<BaseModel>>
+    suspend fun isExist(org: String, repo: String): Boolean
 }

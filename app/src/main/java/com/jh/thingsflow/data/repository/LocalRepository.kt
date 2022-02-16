@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalRepository {
     suspend fun insertRepo(org: String, repo: String, resultIssue: ResultIssue)
-    suspend fun getRepo(org: String, repo: String): Flow<RepoEntity>
+    suspend fun getRepoAsFlow(org: String, repo: String): Flow<RepoEntity?>
+    suspend fun isExist(org: String, repo: String): Boolean
+
 }

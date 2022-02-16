@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Thingsflow</string>
+    <string name="issue_format">#%d : %s</string>
+    <string name="title_format">%s / %s</string>
 </resources>
