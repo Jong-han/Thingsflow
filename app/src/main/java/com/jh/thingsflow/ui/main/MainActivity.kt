@@ -24,20 +24,27 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     override fun initViewAndEvent() {
 
         repeatOnStarted {
-            viewModel.test().collect {
-                when (it) {
+            viewModel.getIssueList().collect { resource ->
+                when (resource) {
                     is Resource.Loading -> {
                         Toast.makeText(this@MainActivity, "로딩중", Toast.LENGTH_SHORT).show()
                     }
                     is Resource.Success -> {
                         Toast.makeText(this@MainActivity, "성공", Toast.LENGTH_SHORT).show()
-                        Log.i("asdf","${it.data?.size}")
+                        val data = resource.data
+                        data?.let { viewModel.insertRepo(it) }
                     }
                     is Resource.Error -> {
-                        Toast.makeText(this@MainActivity, "실패:: ${it.errorMsg}", Toast.LENGTH_SHORT).show()
-                        Log.i("asdf","${it.errorMsg}")
+                        Toast.makeText(this@MainActivity, "실패:: ${resource.errorMsg}", Toast.LENGTH_SHORT).show()
+                        Log.i("asdf","${resource.errorMsg}")
                     }
                 }
+            }
+        }
+
+        repeatOnStarted {
+            viewModel.getIssueListFromLocal().collect {
+                Log.i("asdf","로컬에 저장된 이슈들 :: ${it.size}")
             }
         }
 
