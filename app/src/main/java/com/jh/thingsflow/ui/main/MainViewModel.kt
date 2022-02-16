@@ -3,12 +3,12 @@ package com.jh.thingsflow.ui.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jh.thingsflow.base.BaseModel
 import com.jh.thingsflow.data.Resource
 import com.jh.thingsflow.data.remote.response.ResultIssue
 import com.jh.thingsflow.usecase.IssueUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,10 +21,10 @@ class MainViewModel @Inject constructor(private val issueUseCase: IssueUseCase, 
 //    var repo = "dagger"
 
     sealed class ViewEvent {
-        object ClickTitle: ViewEvent()
+        object ClickTitle : ViewEvent()
     }
 
-    private val _org = MutableStateFlow("google")
+    private val _org = MutableStateFlow("square")
     val org: StateFlow<String> = _org
 
     private val _repo = MutableStateFlow("dagger")
@@ -33,15 +33,18 @@ class MainViewModel @Inject constructor(private val issueUseCase: IssueUseCase, 
     private val _viewEvent = MutableSharedFlow<ViewEvent>()
     val viewEvent: SharedFlow<ViewEvent> = _viewEvent
 
+    private val _issueList = MutableSharedFlow<List<BaseModel>>()
+    val issueList: SharedFlow<List<BaseModel>> = _issueList
+
     fun onClickTitle() {
         viewModelScope.launch {
             _viewEvent.emit(ViewEvent.ClickTitle)
         }
     }
 
-    fun getIssueListFromRemote() = issueUseCase.getIssueListFromRemote(_org.value, _repo.value)
+    private fun getIssueListFromRemote() = issueUseCase.getIssueListFromRemote(_org.value, _repo.value)
 
-    fun insertRepo(org: String, repo: String, resultIssue: ResultIssue) {
+    private fun insertRepo(org: String, repo: String, resultIssue: ResultIssue) {
         viewModelScope.launch(iODispatcher) {
             issueUseCase.insertRepo(org, repo, resultIssue)
         }
@@ -58,7 +61,8 @@ class MainViewModel @Inject constructor(private val issueUseCase: IssueUseCase, 
          * api 검색
          */
         viewModelScope.launch {
-            CoroutineScope(iODispatcher).launch {
+            Log.i("qwer","searchRepo start")
+            withContext(iODispatcher) {
                 if (!issueUseCase.isExist(targetOrg, targetRepo)) {
                     getIssueListFromRemote().collect { resource ->
                         when (resource) {
@@ -76,7 +80,11 @@ class MainViewModel @Inject constructor(private val issueUseCase: IssueUseCase, 
                         }
                     }
                 }
-            }.join()
+            }
+            getIssueListFromLocal().collect {
+                _issueList.emit(it)
+            }
+            Log.i("qwer","searchRepo end")
         }
     }
 

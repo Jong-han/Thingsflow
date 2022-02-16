@@ -51,6 +51,13 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
         }
 
+        repeatOnStarted {
+            viewModel.issueList.collect {
+                Log.i("qwer","list 들어옴")
+                issueAdapter.submitList(it)
+            }
+        }
+
 //        repeatOnStarted {
 //            viewModel.getIssueList().collect { resource ->
 //                when (resource) {
@@ -70,14 +77,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 //            }
 //        }
 
-        repeatOnStarted {
-            viewModel.getIssueListFromLocal().collect {
-                Log.i("asdf","${it.size}")
-                issueAdapter.submitList(it)
-
-                Log.i("asdfasdf","${issueAdapter.currentList.size}")
-            }
-        }
+//        repeatOnStarted {
+//            viewModel.getIssueListFromLocal().collect {
+//                Log.i("asdf","${it.size}")
+//                issueAdapter.submitList(it)
+//
+//                Log.i("asdfasdf","${issueAdapter.currentList.size}")
+//            }
+//        }
 
     }
 }
